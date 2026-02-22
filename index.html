@@ -1072,6 +1072,16 @@ function showResults() {
   const functie = document.getElementById('f-function').value.trim();
   const rolLabel = role === 'manager' ? 'Manager / Teamleider' : 'Directeur / DGA / Eigenaar';
 
+  // Bouw antwoorden op per vraag
+  const antwoordenTekst = questions.map((q, i) => {
+    const ansIdx = answers[q.id];
+    const antwoord = ansIdx !== undefined ? q.options[ansIdx].text : '—';
+    return `V${i+2}: ${antwoord}`;
+  }).join(' | ');
+
+  // Verwijder HTML tags uit adviestekst
+  const adviesTekst = outcomes.text.replace(/<[^>]+>/g, '');
+
   const payload = {
     naam: name,
     email: email,
@@ -1081,6 +1091,8 @@ function showResults() {
     readiness: readinessPct + '%',
     potential: potentialPct + '%',
     uitkomst: outcomes.title.replace(/^[^\w]+/, '').trim(),
+    advies: adviesTekst,
+    antwoorden: antwoordenTekst,
     tijdstempel: new Date().toLocaleString('nl-NL')
   };
 
