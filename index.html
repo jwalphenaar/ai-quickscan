@@ -959,7 +959,9 @@ function renderQuestion() {
 
 function selectOption(qId, idx) {
   answers[qId] = idx;
-  document.querySelectorAll('.option').forEach((el, i) => {
+  // Alleen de opties binnen het actieve question-card updaten
+  const container = document.getElementById('q-options');
+  container.querySelectorAll('.option').forEach((el, i) => {
     el.classList.toggle('selected', i === idx);
   });
   document.getElementById('btn-q-next').disabled = false;
@@ -1082,14 +1084,14 @@ function showResults() {
     tijdstempel: new Date().toLocaleString('nl-NL')
   };
 
-  if (APPS_SCRIPT_URL !== 'https://script.google.com/a/macros/jwalphenaar.nl/s/AKfycbxXerHE3qOxAUfzoCkj6mHF4GM8_1ZRoQWRJ6OoJHAPpL4adDNZM0cPIdXdV8vqRMIP/exec') {
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).catch(err => console.log('Sheet fout:', err));
-  }
+  // Verstuur als FormData (werkt met no-cors)
+  const formData = new FormData();
+  Object.keys(payload).forEach(key => formData.append(key, payload[key]));
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: formData
+  }).catch(err => console.log('Sheet fout:', err));
 
   showScreen('screen-results');
 }
