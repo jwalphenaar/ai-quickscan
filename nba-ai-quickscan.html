@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Readiness Quickscan — Next Business Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a38;
+    --accent: #7C3AED;
+    --accent2: #9F67FF;
+    --accent-glow: rgba(124,58,237,0.15);
+    --green: #22c55e;
+    --orange: #f97316;
+    --red: #ef4444;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(79,142,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Header */
+  .header {
+    padding: 28px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+
+  .logo-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* Progress bar */
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  .step-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  /* Screen transitions */
+  .screen {
+    display: none;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Intro screen */
+  .intro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(79,142,247,0.3);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 28px;
+  }
+
+  .intro-badge span { 
+    width: 6px; height: 6px; 
+    background: var(--accent); 
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    color: var(--white);
+  }
+
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .intro-meta {
+    display: flex;
+    gap: 24px;
+    margin: 32px 0;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .meta-item svg { color: var(--accent); flex-shrink: 0; }
+
+  /* Question card */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+  }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--white);
+    margin-bottom: 28px;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .option:hover {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    color: var(--white);
+  }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: rgba(79,142,247,0.12);
+    color: var(--white);
+  }
+
+  .option-radio {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .option.selected .option-radio {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .option.selected .option-radio::after {
+    content: '';
+    width: 6px; height: 6px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  /* Nav buttons */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 14px 28px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    flex: 1;
+    max-width: 240px;
+    margin-left: auto;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(124,58,237,0.45);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+
+  /* Intro button */
+  .btn-large {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 18px 36px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    box-shadow: 0 4px 24px rgba(124,58,237,0.4);
+    margin-top: 36px;
+  }
+
+  .btn-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(124,58,237,0.5);
+  }
+
+  /* Role cards */
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 500px) {
+    .role-grid { grid-template-columns: 1fr; }
+    .q-card { padding: 28px 20px; }
+  }
+
+  .role-card {
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .role-card:hover {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .role-card.selected {
+    border-color: var(--accent);
+    background: rgba(79,142,247,0.1);
+  }
+
+  .role-icon { font-size: 32px; margin-bottom: 12px; }
+
+  .role-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .role-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Form */
+  .form-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .optional-tag {
+    font-size: 11px;
+    color: var(--border);
+    margin-left: 6px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .form-input {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+
+  .privacy-note {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* Results */
+  .result-header {
+    text-align: center;
+    padding: 48px 0 36px;
+  }
+
+  .result-score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  @media (max-width: 480px) {
+    .result-score-grid { grid-template-columns: 1fr; }
+  }
+
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .score-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .score-dial {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+  }
+
+  .score-dial.low { background: rgba(239,68,68,0.15); border: 3px solid var(--red); color: var(--red); }
+  .score-dial.mid { background: rgba(249,115,22,0.15); border: 3px solid var(--orange); color: var(--orange); }
+  .score-dial.high { background: rgba(34,197,94,0.15); border: 3px solid var(--green); color: var(--green); }
+
+  .score-verdict {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--white);
+  }
+
+  /* Outcome panel */
+  .outcome-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .outcome-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .outcome-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+
+  .outcome-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .outcome-text strong { color: var(--text); }
+
+  /* CTA */
+  .cta-block {
+    background: linear-gradient(135deg, rgba(79,142,247,0.1), rgba(124,92,252,0.1));
+    border: 1px solid rgba(79,142,247,0.25);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    margin: 24px 0 48px;
+  }
+
+  .cta-block h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .cta-block p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 16px 32px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 4px 24px rgba(124,58,237,0.4);
+    transition: all 0.2s;
+  }
+
+  .btn-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(124,58,237,0.5);
+  }
+
+  .persona-name {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .error-msg {
+    font-size: 13px;
+    color: var(--red);
+    margin-top: -4px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="logo-dot"></div>
+    <span class="logo-text">Next Business Academy</span>
+  </div>
+
+  <!-- ====== INTRO ====== -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-badge">
+      <span></span>
+      AI Readiness Quickscan
+    </div>
+
+    <h1>Is jouw organisatie<br><em>klaar voor AI?</em></h1>
+
+    <p style="font-size:17px; color:var(--muted); line-height:1.7; max-width:520px;">
+      In 3 minuten weet je hoe AI-ready jullie organisatie is én hoeveel er voor jullie te winnen valt. Beantwoord 8 eerlijke vragen — en ontvang een persoonlijk rapport.
+    </p>
+
+    <div class="intro-meta">
+      <div class="meta-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ~3 minuten
+      </div>
+      <div class="meta-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        8 vragen
+      </div>
+      <div class="meta-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+        Persoonlijk rapport
+      </div>
+    </div>
+
+    <button class="btn-large" onclick="startScan()">
+      Start de quickscan
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+
+  <!-- ====== ROLE ====== -->
+  <div class="screen" id="screen-role">
+    <div class="progress-track"><div class="progress-fill" id="progress-bar"></div></div>
+    <p class="step-label">Stap 1 van 9</p>
+
+    <div class="q-card">
+      <p class="q-number">Vraag 1</p>
+      <p class="q-text">Wat is jouw rol binnen de organisatie?</p>
+      <div class="role-grid">
+        <div class="role-card" onclick="selectRole('manager')" id="role-manager">
+          <div class="role-icon">👥</div>
+          <div class="role-title">Manager / Teamleider</div>
+          <div class="role-desc">Ik geef leiding aan een team en ben verantwoordelijk voor dagelijkse resultaten</div>
+        </div>
+        <div class="role-card" onclick="selectRole('dga')" id="role-dga">
+          <div class="role-icon">🏢</div>
+          <div class="role-title">Directeur / DGA / Eigenaar</div>
+          <div class="role-desc">Ik ben eindverantwoordelijk voor de organisatie of een grote afdeling</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="goBack()">← Terug</button>
+      <button class="btn btn-primary" id="btn-role-next" onclick="nextFromRole()" disabled>Volgende →</button>
+    </div>
+  </div>
+
+  <!-- ====== QUESTIONS ====== -->
+  <div class="screen" id="screen-question">
+    <div class="progress-track"><div class="progress-fill" id="progress-bar2"></div></div>
+    <p class="step-label" id="q-step-label">Stap 2 van 9</p>
+
+    <div class="q-card" id="question-card">
+      <p class="q-number" id="q-number-label">Vraag 2</p>
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="q-options"></div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="prevQuestion()">← Terug</button>
+      <button class="btn btn-primary" id="btn-q-next" onclick="nextQuestion()" disabled>Volgende →</button>
+    </div>
+  </div>
+
+  <!-- ====== FORM ====== -->
+  <div class="screen" id="screen-form">
+    <div class="progress-track"><div class="progress-fill" style="width:88%"></div></div>
+    <p class="step-label">Bijna klaar</p>
+
+    <div class="q-card">
+      <p class="q-number">Jouw rapport</p>
+      <p class="q-text">Waar mogen we de resultaten naartoe sturen?</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Voornaam & achternaam</label>
+          <input type="text" class="form-input" id="f-name" placeholder="Jan Willem Alphenaar">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-mailadres</label>
+          <input type="email" class="form-input" id="f-email" placeholder="jouw@bedrijf.nl">
+          <span class="error-msg" id="email-error">Vul een geldig e-mailadres in</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bedrijfsnaam</label>
+          <input type="text" class="form-input" id="f-company" placeholder="Naam van jullie organisatie">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Functietitel <span class="optional-tag">(optioneel)</span></label>
+          <input type="text" class="form-input" id="f-function" placeholder="Bijv. Marketing Manager">
+        </div>
+      </div>
+
+      <p class="privacy-note">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Je gegevens worden nooit gedeeld of verkocht
+      </p>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="prevQuestion()">← Terug</button>
+      <button class="btn btn-primary" onclick="showResults()">Bekijk mijn resultaat →</button>
+    </div>
+  </div>
+
+  <!-- ====== RESULTS ====== -->
+  <div class="screen" id="screen-results">
+    <div class="result-header">
+      <span class="persona-name" id="result-name"></span>
+      <h1 style="font-size:clamp(28px,4vw,42px);">Jouw <em>AI Readiness</em><br>rapport</h1>
+    </div>
+
+    <div class="result-score-grid">
+      <div class="score-card">
+        <p class="score-label">AI Readiness</p>
+        <div class="score-dial" id="readiness-dial">—</div>
+        <p class="score-verdict" id="readiness-verdict">—</p>
+      </div>
+      <div class="score-card">
+        <p class="score-label">AI Potential</p>
+        <div class="score-dial" id="potential-dial">—</div>
+        <p class="score-verdict" id="potential-verdict">—</p>
+      </div>
+    </div>
+
+    <div class="outcome-panel" id="outcome-panel">
+      <p class="outcome-title" id="outcome-title"></p>
+      <p class="outcome-text" id="outcome-text"></p>
+    </div>
+
+    <div class="cta-block">
+      <h3>Plan een vrijblijvende intake</h3>
+      <p>In 20 minuten bespreken we wat AI concreet voor jullie organisatie kan betekenen. Geen verkooppraat — gewoon een eerlijk gesprek.</p>
+      <a href="https://nextbusinessacademy.nl/ai-training-in-company-2026/#intake" class="btn-cta" target="_blank">
+        Plan een intake →
+      </a>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+// ===== DATA =====
+const questionsManager = [
+  {
+    id: 'a2', dim: 'readiness',
+    text: 'Hoe vaak zie jij medewerkers in jouw team AI-tools gebruiken zoals ChatGPT of Copilot?',
+    options: [
+      { text: 'Nooit — ik heb het nog niet gezien', score: 1 },
+      { text: 'Af en toe, maar sporadisch en zonder structuur', score: 2 },
+      { text: 'Regelmatig, maar het is niet ingeburgerd', score: 3 },
+      { text: 'Dagelijks — het is onderdeel van hoe we werken', score: 4 },
+    ]
+  },
+  {
+    id: 'a3', dim: 'readiness',
+    text: 'Hoe reageert jouw team doorgaans op nieuwe werkwijzen of tools?',
+    options: [
+      { text: 'Er is vaak weerstand of onzekerheid', score: 1 },
+      { text: 'Neutraal — het hangt sterk van de persoon af', score: 2 },
+      { text: 'Over het algemeen open en bereid om te leren', score: 3 },
+      { text: 'Proactief — mensen pakken zelf nieuwe dingen op', score: 4 },
+    ]
+  },
+  {
+    id: 'a4', dim: 'readiness',
+    text: 'Hoe zou jij de dagelijkse werkwijze van jouw team omschrijven?',
+    options: [
+      { text: 'Veel handmatige of papieren processen', score: 1 },
+      { text: 'Basis digitaal — e-mail en Office zijn de norm', score: 2 },
+      { text: 'Regelmatig gebruik van digitale tools en software', score: 3 },
+      { text: 'Data-gedreven, met geïntegreerde systemen', score: 4 },
+    ]
+  },
+  {
+    id: 'a5', dim: 'potential',
+    text: 'Hoeveel tijd besteedt jouw team wekelijks aan schrijven — e-mails, rapportages, offertes, verslagen?',
+    options: [
+      { text: 'Nauwelijks — het werk is voornamelijk fysiek of operationeel', score: 1 },
+      { text: 'Een paar uur per week per persoon', score: 2 },
+      { text: 'Schrijven is een vast en tijdrovend onderdeel van het werk', score: 3 },
+      { text: 'Een groot deel van de dag gaat in tekst en communicatie', score: 4 },
+    ]
+  },
+  {
+    id: 'a6', dim: 'potential',
+    text: 'Moeten medewerkers regelmatig informatie opzoeken, samenvatten of analyseren?',
+    options: [
+      { text: 'Zelden — dit speelt nauwelijks', score: 1 },
+      { text: 'Soms, maar niet structureel', score: 2 },
+      { text: 'Regelmatig — dit kost merkbaar tijd', score: 3 },
+      { text: 'Ja, dit is een kernactiviteit en een duidelijk knelpunt', score: 4 },
+    ]
+  },
+  {
+    id: 'a7', dim: 'potential',
+    text: 'Zijn er taken waarvan jij en je team weten dat ze inefficiënt zijn, maar waar nog geen goede oplossing voor is?',
+    options: [
+      { text: 'Nee — de workflows zijn redelijk goed ingericht', score: 1 },
+      { text: 'Een paar kleine irritaties', score: 2 },
+      { text: 'Ja, er zijn duidelijke knelpunten die tijd kosten', score: 3 },
+      { text: 'Ja, er gaat structureel veel tijd verloren', score: 4 },
+    ]
+  },
+  {
+    id: 'a8', dim: 'potential',
+    text: 'Hoeveel medewerkers in jouw team zouden direct baat hebben bij betere AI-vaardigheden?',
+    options: [
+      { text: '1 tot 5 personen', score: 1 },
+      { text: '6 tot 15 personen', score: 2 },
+      { text: '16 tot 50 personen', score: 3 },
+      { text: 'Meer dan 50 personen', score: 4 },
+    ]
+  },
+];
+
+const questionsDGA = [
+  {
+    id: 'b2', dim: 'readiness',
+    text: 'In hoeverre wordt AI momenteel actief ingezet binnen jouw organisatie?',
+    options: [
+      { text: 'Niet — het staat nog niet op de agenda', score: 1 },
+      { text: 'Er wordt over gesproken, maar er gebeurt weinig', score: 2 },
+      { text: 'Enkele medewerkers of afdelingen experimenteren ermee', score: 3 },
+      { text: 'AI wordt al structureel ingezet op meerdere plekken', score: 4 },
+    ]
+  },
+  {
+    id: 'b3', dim: 'readiness',
+    text: 'Is er binnen jouw organisatie nagedacht over een AI-strategie of richtlijnen voor gebruik?',
+    options: [
+      { text: 'Nee — dit ontbreekt volledig', score: 1 },
+      { text: 'Het staat op de lijst maar is nog niet opgepakt', score: 2 },
+      { text: 'We zijn ermee bezig', score: 3 },
+      { text: 'Ja, er is beleid en een richting bepaald', score: 4 },
+    ]
+  },
+  {
+    id: 'b4', dim: 'readiness',
+    text: 'Hoe zou jij de algehele digitale volwassenheid van jouw organisatie omschrijven?',
+    options: [
+      { text: 'Veel handmatige processen, digitalisering staat nog in de kinderschoenen', score: 1 },
+      { text: 'Basis op orde, maar weinig innovatie in werkwijzen', score: 2 },
+      { text: 'Redelijk digitaal, open voor nieuwe tools', score: 3 },
+      { text: 'Data-gedreven en technologisch vooruitstrevend', score: 4 },
+    ]
+  },
+  {
+    id: 'b5', dim: 'potential',
+    text: 'In hoeverre denk jij dat AI repetitieve of tijdrovende processen in jouw organisatie kan versnellen?',
+    options: [
+      { text: 'Nauwelijks — ons werk leent zich hier niet goed voor', score: 1 },
+      { text: 'Misschien op kleine schaal', score: 2 },
+      { text: 'Op meerdere plekken is duidelijk winst te behalen', score: 3 },
+      { text: 'Er liggen grote efficiency-kansen die we nu laten liggen', score: 4 },
+    ]
+  },
+  {
+    id: 'b6', dim: 'potential',
+    text: 'Merkt jouw organisatie dat concurrenten of de markt al AI inzetten?',
+    options: [
+      { text: 'Nee — AI speelt nog geen rol in onze markt', score: 1 },
+      { text: 'We horen er over maar zien het nog niet', score: 2 },
+      { text: 'Ja, sommige concurrenten experimenteren ermee', score: 3 },
+      { text: 'Ja, en het begint merkbaar verschil te maken', score: 4 },
+    ]
+  },
+  {
+    id: 'b7', dim: 'potential',
+    text: 'In hoeverre is het werk binnen jouw organisatie kennisintensief — denk aan advies, communicatie, analyse, maatwerk?',
+    options: [
+      { text: 'Beperkt — het werk is voornamelijk uitvoerend of fysiek', score: 1 },
+      { text: 'Een deel is kennisintensief, maar niet de kern', score: 2 },
+      { text: 'Een groot deel van het werk draait om kennis en communicatie', score: 3 },
+      { text: 'Vrijwel al het werk is kennisintensief', score: 4 },
+    ]
+  },
+  {
+    id: 'b8', dim: 'potential',
+    text: 'Hoeveel medewerkers zouden organisatiebreed profiteren van betere AI-vaardigheden?',
+    options: [
+      { text: '1 tot 5 personen', score: 1 },
+      { text: '6 tot 15 personen', score: 2 },
+      { text: '16 tot 50 personen', score: 3 },
+      { text: 'Meer dan 50 personen', score: 4 },
+    ]
+  },
+];
+
+// ===== STATE =====
+let role = null;
+let currentQ = 0;
+let answers = {};
+let questions = [];
+
+function startScan() {
+  showScreen('screen-role');
+  updateProgress(1, 9, 'progress-bar');
+}
+
+function selectRole(r) {
+  role = r;
+  document.getElementById('role-manager').classList.toggle('selected', r === 'manager');
+  document.getElementById('role-dga').classList.toggle('selected', r === 'dga');
+  document.getElementById('btn-role-next').disabled = false;
+}
+
+function nextFromRole() {
+  questions = role === 'manager' ? questionsManager : questionsDGA;
+  currentQ = 0;
+  renderQuestion();
+  showScreen('screen-question');
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const stepNum = currentQ + 2;
+  document.getElementById('q-step-label').textContent = `Stap ${stepNum} van 9`;
+  document.getElementById('q-number-label').textContent = `Vraag ${stepNum}`;
+  document.getElementById('q-text').textContent = q.text;
+  updateProgress(stepNum, 9, 'progress-bar2');
+
+  const container = document.getElementById('q-options');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option' + (answers[q.id] === i ? ' selected' : '');
+    btn.innerHTML = `<span class="option-radio"></span><span>${opt.text}</span>`;
+    btn.onclick = () => selectOption(q.id, i);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('btn-q-next').disabled = answers[q.id] === undefined;
+}
+
+function selectOption(qId, idx) {
+  answers[qId] = idx;
+  document.querySelectorAll('.option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('btn-q-next').disabled = false;
+}
+
+function nextQuestion() {
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showScreen('screen-form');
+  }
+}
+
+function prevQuestion() {
+  const active = document.querySelector('.screen.active').id;
+  if (active === 'screen-form') {
+    currentQ = questions.length - 1;
+    renderQuestion();
+    showScreen('screen-question');
+  } else if (active === 'screen-question') {
+    if (currentQ === 0) {
+      showScreen('screen-role');
+    } else {
+      currentQ--;
+      renderQuestion();
+    }
+  } else if (active === 'screen-role') {
+    showScreen('screen-intro');
+  }
+}
+
+function goBack() {
+  showScreen('screen-intro');
+}
+
+function updateProgress(step, total, barId) {
+  const pct = ((step - 1) / (total - 1)) * 100;
+  document.getElementById(barId).style.width = pct + '%';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showResults() {
+  const name = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const company = document.getElementById('f-company').value.trim();
+
+  // Basic validation
+  if (!name || !email || !company) {
+    if (!name) document.getElementById('f-name').style.borderColor = 'var(--red)';
+    if (!company) document.getElementById('f-company').style.borderColor = 'var(--red)';
+    if (!email) {
+      document.getElementById('f-email').style.borderColor = 'var(--red)';
+      document.getElementById('email-error').style.display = 'block';
+    }
+    return;
+  }
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    document.getElementById('f-email').style.borderColor = 'var(--red)';
+    document.getElementById('email-error').style.display = 'block';
+    return;
+  }
+
+  // Calculate scores
+  let readinessTotal = 0, readinessCount = 0;
+  let potentialTotal = 0, potentialCount = 0;
+
+  questions.forEach((q, i) => {
+    const ansIdx = answers[q.id];
+    if (ansIdx !== undefined) {
+      const score = q.options[ansIdx].score;
+      if (q.dim === 'readiness') { readinessTotal += score; readinessCount++; }
+      else { potentialTotal += score; potentialCount++; }
+    }
+  });
+
+  const readinessPct = Math.round((readinessTotal / (readinessCount * 4)) * 100);
+  const potentialPct = Math.round((potentialTotal / (potentialCount * 4)) * 100);
+
+  // Display
+  const firstName = name.split(' ')[0];
+  document.getElementById('result-name').textContent = firstName + ', dit is jouw rapport:';
+
+  function setDial(dialId, verdictId, pct) {
+    const dial = document.getElementById(dialId);
+    const verdict = document.getElementById(verdictId);
+    dial.textContent = pct + '%';
+    if (pct < 40) { dial.className = 'score-dial low'; verdict.textContent = 'Laag'; }
+    else if (pct < 70) { dial.className = 'score-dial mid'; verdict.textContent = 'Gemiddeld'; }
+    else { dial.className = 'score-dial high'; verdict.textContent = 'Hoog'; }
+  }
+
+  setDial('readiness-dial', 'readiness-verdict', readinessPct);
+  setDial('potential-dial', 'potential-verdict', potentialPct);
+
+  // Outcome texts
+  const outcomes = getOutcome(readinessPct, potentialPct, role, company);
+  document.getElementById('outcome-title').textContent = outcomes.title;
+  document.getElementById('outcome-text').innerHTML = outcomes.text;
+
+  // Stuur data naar Google Sheets via Apps Script Web App
+  const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/jwalphenaar.nl/s/AKfycbxXerHE3qOxAUfzoCkj6mHF4GM8_1ZRoQWRJ6OoJHAPpL4adDNZM0cPIdXdV8vqRMIP/exec';
+  const functie = document.getElementById('f-function').value.trim();
+  const rolLabel = role === 'manager' ? 'Manager / Teamleider' : 'Directeur / DGA / Eigenaar';
+
+  const payload = {
+    naam: name,
+    email: email,
+    bedrijf: company,
+    functie: functie,
+    rol: rolLabel,
+    readiness: readinessPct + '%',
+    potential: potentialPct + '%',
+    uitkomst: outcomes.title.replace(/^[^\w]+/, '').trim(),
+    tijdstempel: new Date().toLocaleString('nl-NL')
+  };
+
+  if (APPS_SCRIPT_URL !== 'https://script.google.com/a/macros/jwalphenaar.nl/s/AKfycbxXerHE3qOxAUfzoCkj6mHF4GM8_1ZRoQWRJ6OoJHAPpL4adDNZM0cPIdXdV8vqRMIP/exec') {
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(err => console.log('Sheet fout:', err));
+  }
+
+  showScreen('screen-results');
+}
+
+function getOutcome(r, p, role, company) {
+  const org = company || 'jullie organisatie';
+  const isManager = role === 'manager';
+
+  if (r >= 70 && p >= 70) {
+    return {
+      title: '🚀 Klaar voor de volgende stap',
+      text: `<strong>${org} heeft een sterke basis én volop kansen.</strong> De readiness is hoog — mensen staan open voor AI en de digitale werkwijze is op orde. Tegelijk liggen er grote efficiency-winsten te wachten. ${isManager ? 'Jouw team' : 'Jullie organisatie'} is klaar om AI niet alleen te omarmen, maar er écht het verschil mee te maken. Een gerichte in-company training zorgt dat iedereen op hetzelfde niveau komt en de kansen direct benut worden.`
+    };
+  } else if (r < 40 && p >= 70) {
+    return {
+      title: '⚡ Veel te winnen — training is urgent',
+      text: `<strong>Het potentieel bij ${org} is groot, maar de readiness loopt achter.</strong> ${isManager ? 'Jouw team mist' : 'De organisatie mist'} nog de kennis en tools om die kansen te benutten. Dit is precies het moment waarop een in-company AI-training het meeste oplevert — voordat concurrenten verder lopen. Met de juiste begeleiding zet je de achterstand snel om in een voorsprong.`
+    };
+  } else if (r >= 70 && p < 40) {
+    return {
+      title: '✅ Goed fundament, slim uitbreiden',
+      text: `<strong>${org} is digitaal volwassen en open voor innovatie.</strong> De readiness is uitstekend. Het directe AI-potentieel is nu beperkt, maar dat kan snel veranderen naarmate het werk evolueert. Een strategische sessie helpt te bepalen waar AI op termijn wél het verschil gaat maken — zodat jullie niet achter de feiten aanlopen.`
+    };
+  } else if (r < 40 && p < 40) {
+    return {
+      title: '📋 Eerst de basis op orde',
+      text: `<strong>${org} is nog in een vroeg stadium van digitale adoptie.</strong> Dat is geen probleem — het is een startpunt. Voordat AI zinvol ingezet kan worden, helpt het om eerst de digitale werkwijzen te versterken. Een intake-gesprek helpt bepalen welke eerste stap het meeste oplevert voor jullie specifieke situatie.`
+    };
+  } else if (r < 55) {
+    return {
+      title: '📈 Potentieel aanwezig, fundament versterken',
+      text: `<strong>Er is zeker potentieel bij ${org}, maar de readiness vraagt aandacht.</strong> ${isManager ? 'Niet iedereen in het team' : 'Niet de hele organisatie'} is even ver. Een in-company training brengt iedereen op een werkbaar niveau en zorgt dat de AI-inzet structureel wordt — in plaats van ad hoc.`
+    };
+  } else {
+    return {
+      title: '💡 Mooie kansen, tijd om te handelen',
+      text: `<strong>${org} heeft een redelijke basis en voldoende potentieel om met AI aan de slag te gaan.</strong> ${isManager ? 'Je team is er klaar voor' : 'De organisatie is er klaar voor'} — de volgende stap is structureel aan de slag gaan. Een gerichte in-company training geeft direct praktische handvatten en zorgt voor consistente toepassing.`
+    };
+  }
+}
+</script>
+</body>
+</html>
